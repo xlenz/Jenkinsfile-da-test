@@ -7,6 +7,7 @@ pipeline {
     string(name: 'siteName', defaultValue: 'TEST-site', description: 'Profile Name')
     
     string(name: 'componentName', defaultValue: 'TEST-component', description: 'Component Name')
+    text(name: 'baseDir', defaultValue: '.', description: 'The base directory where the artifacts are located.')
     text(name: 'fileIncludePatterns', defaultValue: '**/*.txt')
     text(name: 'fileExcludePatterns', defaultValue: '''
       **/*tmp*
@@ -21,6 +22,16 @@ pipeline {
         
     string(name: 'globalProcessName', defaultValue: 'TEST-globalProcess', description: 'Global Process Name')
     string(name: 'resourceName', defaultValue: 'TEST-resource', description: 'Resource Name')
+    
+    string(name: 'deployIf', defaultValue: 'true', description: 'Run Application process after publishing?')
+    string(name: 'processIf', defaultValue: 'true', description: 'Run Global process after publishing?')
+    string(name: 'runGlobalProcessIf', defaultValue: 'true', description: 'Run Global Process?')
+    string(name: 'runApplicationProcessIf', defaultValue: 'true', description: 'Run Application Process?')
+    
+    booleanParam(name: 'deployUpdateJobStatus', defaultValue: true, description: 'Wait for a process completion?')
+    booleanParam(name: 'processUpdateJobStatus', defaultValue: true, description: 'Wait for a process completion?')
+    booleanParam(name: 'globalProcessUpdateJobStatus', defaultValue: false, description: 'Wait for a process completion?')
+    booleanParam(name: 'appProcessUpdateJobStatus', defaultValue: false, description: 'Wait for a process completion?')
     
     booleanParam(name: 'skip', defaultValue: false, description: 'Skip publish artifacts step?')
   }
@@ -57,6 +68,7 @@ pipeline {
           statusName: params.statusName,
 
           deploy: true,
+          deployIf: param.deployIf,
           deployApp: params.applicationName,
           deployEnv: params.environmentName,
           deployProc: params.applicationProcessName
