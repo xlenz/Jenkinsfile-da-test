@@ -7,20 +7,20 @@ pipeline {
     string(name: 'siteName', defaultValue: 'TEST-site', description: 'Profile Name')
     
     string(name: 'component', defaultValue: 'TEST-component', description: 'Component Name')
-    string(name: 'fileIncludePatterns', defaultValue: '**/*.txt')
-    string(name: 'fileExcludePatterns', defaultValue: '''
-    **/*tmp*
-    **/.git
+    text(name: 'fileIncludePatterns', defaultValue: '**/*.txt')
+    text(name: 'fileExcludePatterns', defaultValue: '''
+      **/*tmp*
+      **/.git
     ''')
     
     string(name: 'deployApp', defaultValue: 'TEST-app', description: 'Application Name')
     string(name: 'deployEnv', defaultValue: 'TEST-env', description: 'Environment Name')
-    string(name: 'deployProc', defaultValue: 'TEST-app-proc', description: 'Application Process Name')
+    string(name: 'deployProc', defaultValue: 'TEST-app-process', description: 'Application Process Name')
         
-    string(name: 'processName', defaultValue: 'TEST-GlobalProcess', description: 'Global Process Name')
-    string(name: 'resourceName', defaultValue: 'TEST-RESOURCE', description: 'Resource Name')
+    string(name: 'processName', defaultValue: 'TEST-globalProcess', description: 'Global Process Name')
+    string(name: 'resourceName', defaultValue: 'TEST-resource', description: 'Resource Name')
     
-    booleanParam(name: 'skip', defaultValue: true, description: 'Debug?')
+    booleanParam(name: 'skip', defaultValue: false, description: 'Debug?')
   }
 
   stages {
@@ -34,7 +34,7 @@ pipeline {
         }
         
         sh 'env > env_variables.txt'
-        sh 'env.BUILD_NUMBER > some_tmp_file.txt'
+        sh "'${env.BUILD_NUMBER}' > some_tmp_file.txt"
       }
     }
     
