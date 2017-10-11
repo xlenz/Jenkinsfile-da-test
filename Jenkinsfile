@@ -30,7 +30,7 @@ pipeline {
     
     booleanParam(name: 'deployUpdateJobStatus', defaultValue: true, description: 'Wait for a process completion?')
     booleanParam(name: 'processUpdateJobStatus', defaultValue: true, description: 'Wait for a process completion?')
-    booleanParam(name: 'globalProcessUpdateJobStatus', defaultValue: false, description: 'Wait for a process completion?')
+    booleanParam(name: 'globalProcessUpdateJobStatus', defaultValue: true, description: 'Wait for a process completion?')
     booleanParam(name: 'appProcessUpdateJobStatus', defaultValue: false, description: 'Wait for a process completion?')
     
     booleanParam(name: 'skip', defaultValue: false, description: 'Skip publish artifacts step?')
@@ -72,13 +72,16 @@ pipeline {
           deployUpdateJobStatus: params.deployUpdateJobStatus,
           deployApp: params.applicationName,
           deployEnv: params.environmentName,
-          deployProc: params.applicationProcessName
+          deployProc: params.applicationProcessName,
+          deployProps: 'app-process-prop=some value'
         ])
         
         // Run Global Process
         script {
-          def browsers = ['v11', 'v22']
+          def browsers = ['chrome', 'firefox', 'ie', 'edge']
           for (int i = 0; i < browsers.size(); ++i) {
+            echo "Testing the ${browsers[i]} browser, ${i}"
+            
             step([$class: 'RunGlobalProcessNotifier',
               siteName: params.siteName,
 
@@ -86,12 +89,12 @@ pipeline {
               updateJobStatus: params.globalProcessUpdateJobStatus,
 
               globalProcessName: params.globalProcessName,
-              resourceName: params.resourceName//,
+              resourceName: params.resourceName,
 
-//              globalProcessProperties: '''
-//                p1=v1
-//                p2=v2
-              //'''
+              globalProcessProperties: '''
+                browser = ${browsers[i]}
+                idx = ${i}
+              '''
             ])
           }
         }
@@ -108,23 +111,11 @@ pipeline {
 
           applicationName: params.applicationName,
           environmentName: params.environmentName,
-          applicationProcessName: params.applicationProcessName
+          applicationProcessName: params.applicationProcessName,
+          applicationProcessProperties: 'prop1=value1'
         ])
       }
-    }
-    
-    stage('ui-tests') {
-      steps {
-        script {
-          def browsers = ['chrome', 'firefox']
-          for (int i = 0; i < browsers.size(); ++i) {
-            echo "Testing the ${browsers[i]} browser"
-            sleep 1
-          }
-        }
-      }
-    }
-    
+    }   
   }
 
   // using post-build actions
@@ -145,7 +136,8 @@ pipeline {
         processIf: params.processIf,
         processUpdateJobStatus: params.processUpdateJobStatus,
         processName: params.globalProcessName,
-        resourceName: params.resourceName
+        resourceName: params.resourceName,
+        processProps: 'prop=some'
       ])
       
       // Set component version status
