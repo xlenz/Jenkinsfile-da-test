@@ -6,7 +6,7 @@ pipeline {
   parameters {
     string(name: 'siteName', defaultValue: 'TEST-site', description: 'Profile Name')
     
-    string(name: 'component', defaultValue: 'TEST-component', description: 'Component Name')
+    string(name: 'componentName', defaultValue: 'TEST-component', description: 'Component Name')
     text(name: 'fileIncludePatterns', defaultValue: '**/*.txt')
     text(name: 'fileExcludePatterns', defaultValue: '''
       **/*tmp*
@@ -50,7 +50,7 @@ pipeline {
           baseDir: env.WORKSPACE,
           fileIncludePatterns: params.fileIncludePatterns,
           fileExcludePatterns: params.fileExcludePatterns,
-          component: params.component,
+          component: params.componentName,
           versionName: env.BUILD_NUMBER,
           
           addStatus: true,
@@ -74,7 +74,7 @@ pipeline {
         step([$class: 'RunApplicationProcessNotifier',
           siteName: params.siteName,
 
-          component: params.component,
+          componentName: params.componentName,
           versionName: env.BUILD_NUMBER,
 
           applicationName: params.applicationName,
@@ -121,8 +121,8 @@ pipeline {
       step([$class: 'UpdateComponentVersionStatusNotifier',
         siteName: params.siteName,
 
-        action: 'Add',
-        component: params.component,
+        action: 'ADD',
+        componentName: params.componentName,
         versionName: "${env.BUILD_NUMBER}-TEST",
         statusName: params.statusName
       ])
@@ -131,8 +131,8 @@ pipeline {
       step([$class: 'UpdateComponentVersionStatusNotifier',
         siteName: params.siteName,
 
-        action: 'Remove',
-        component: params.component,
+        action: 'REMOVE',
+        componentName: params.componentName,
         versionName: env.BUILD_NUMBER,
         statusName: params.statusName
       ])
