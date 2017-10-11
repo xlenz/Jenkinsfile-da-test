@@ -1,7 +1,7 @@
 pipeline {
   agent { label 'master' }
 
-  options { timeout(time: 1, unit: 'MINUTES') }
+  options { timeout(time: 5, unit: 'MINUTES') }
 
   parameters {
     string(name: 'siteName', defaultValue: 'TEST-site', description: 'Profile Name')
