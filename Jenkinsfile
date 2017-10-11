@@ -76,18 +76,25 @@ pipeline {
         ])
         
         // Run Global Process
-        step([$class: 'RunGlobalProcessNotifier',
-          siteName: params.siteName,
+        script {
+          def browsers = ['v11', 'v22']
+          for (int i = 0; i < browsers.size(); ++i) {
+            step([$class: 'RunGlobalProcessNotifier',
+              siteName: params.siteName,
 
-          runGlobalProcessIf: params.runGlobalProcessIf,
-          updateJobStatus: params.globalProcessUpdateJobStatus,
+              runGlobalProcessIf: params.runGlobalProcessIf,
+              updateJobStatus: params.globalProcessUpdateJobStatus,
 
-          globalProcessName: params.globalProcessName,
-          resourceName: params.resourceName,
-              
-          globalProcessProperties: '''p1=v1
-p2=v2'''
-        ])
+              globalProcessName: params.globalProcessName,
+              resourceName: params.resourceName//,
+
+//              globalProcessProperties: '''
+//                p1=v1
+//                p2=v2
+              //'''
+            ])
+          }
+        }
         
         // Run Application Process
         step([$class: 'RunApplicationProcessNotifier',
