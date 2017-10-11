@@ -140,10 +140,6 @@ pipeline {
       // artifacts archiver plugin usage
       step([$class: 'ArtifactArchiver', artifacts: '*.txt'])
     }
-
-      // artifacts archiver plugin usage
-      step([$class: 'ArtifactArchiver', artifacts: '*.txt'])
-    }
   }
   
 }
