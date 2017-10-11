@@ -6,9 +6,12 @@ pipeline {
   parameters {
     string(name: 'siteName', defaultValue: 'TEST-site', description: 'Profile Name')
     
-    string(name: 'component', defaultValue: 'TEST-site', description: 'Profile Name')
-    string(name: 'fileIncludePatterns', defaultValue: '*.txt')
-    string(name: 'fileExcludePatterns', defaultValue: '')
+    string(name: 'component', defaultValue: 'TEST-component', description: 'Component Name')
+    string(name: 'fileIncludePatterns', defaultValue: '**/*.txt')
+    string(name: 'fileExcludePatterns', defaultValue: '''
+    **/*tmp*
+    **/.git
+    ''')
     
     string(name: 'deployApp', defaultValue: 'TEST-app', description: 'Application Name')
     string(name: 'deployEnv', defaultValue: 'TEST-env', description: 'Environment Name')
@@ -30,7 +33,8 @@ pipeline {
           println "__Build number ${env.BUILD_NUMBER}"
         }
         
-        sh 'env > env_variables.txt'      
+        sh 'env > env_variables.txt'
+        sh 'env.BUILD_NUMBER > some_tmp_file.txt'
       }
     }
     
@@ -52,6 +56,7 @@ pipeline {
           deployEnv: params.deployEnv,
           deployProc: params.deployProc
         ])
+
       }
     }
     
@@ -70,7 +75,23 @@ pipeline {
   }
 
   post {
-    always {
+    always {        
+      // Publish artifacts and run Global Process
+      step([$class: 'SerenaDAPublisher',
+        skip: params.skip,
+        siteName: params.siteName,
+
+        baseDir: env.WORKSPACE,
+        fileIncludePatterns: params.fileIncludePatterns,
+        fileExcludePatterns: params.fileExcludePatterns,
+        component: params.component,
+        versionName: env.BUILD_NUMBER,
+
+        runProcess: true,
+        processName: params.processName,
+        resourceName: params.resourceName
+      ])
+
       // artifacts archiver plugin usage
       step([$class: 'ArtifactArchiver', artifacts: '*.txt'])
     }
