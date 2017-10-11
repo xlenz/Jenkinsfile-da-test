@@ -133,12 +133,12 @@ pipeline {
         baseDir: env.WORKSPACE,
         fileIncludePatterns: params.fileIncludePatterns,
         fileExcludePatterns: params.fileExcludePatterns,
-        component: params.component,
+        component: params.componentName,
         versionName: "${env.BUILD_NUMBER}-TEST",
 
         runProcess: true,
-        // processIf: params.processIf,
-        // processUpdateJobStatus: params.processUpdateJobStatus,
+        processIf: params.processIf,
+        processUpdateJobStatus: params.processUpdateJobStatus,
         processName: params.globalProcessName,
         resourceName: params.resourceName
       ])
