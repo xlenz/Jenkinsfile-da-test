@@ -13,14 +13,16 @@ pipeline {
       **/.git
     ''')
     
-    string(name: 'deployApp', defaultValue: 'TEST-app', description: 'Application Name')
-    string(name: 'deployEnv', defaultValue: 'TEST-env', description: 'Environment Name')
-    string(name: 'deployProc', defaultValue: 'TEST-app-process', description: 'Application Process Name')
+    string(name: 'statusName', defaultValue: 'TEST-versionStatus', description: 'Version Status Name')
+    
+    string(name: 'applicationName', defaultValue: 'TEST-app', description: 'Application Name')
+    string(name: 'environmentName', defaultValue: 'TEST-env', description: 'Environment Name')
+    string(name: 'applicationProcessName', defaultValue: 'TEST-app-process', description: 'Application Process Name')
         
-    string(name: 'processName', defaultValue: 'TEST-globalProcess', description: 'Global Process Name')
+    string(name: 'globalProcessName', defaultValue: 'TEST-globalProcess', description: 'Global Process Name')
     string(name: 'resourceName', defaultValue: 'TEST-resource', description: 'Resource Name')
     
-    booleanParam(name: 'skip', defaultValue: false, description: 'Debug?')
+    booleanParam(name: 'skip', defaultValue: false, description: 'Skip publish artifacts step?')
   }
 
   stages {
@@ -40,7 +42,7 @@ pipeline {
     
     stage('DA Plugin') {
       steps {
-        // Publish artifacts and run Application Process
+        // Publish artifacts, add version status and run Application Process
         step([$class: 'SerenaDAPublisher',
           skip: params.skip,
           siteName: params.siteName,
@@ -50,13 +52,35 @@ pipeline {
           fileExcludePatterns: params.fileExcludePatterns,
           component: params.component,
           versionName: env.BUILD_NUMBER,
+          
+          addStatus: true,
+          statusName: params.statusName,
 
           deploy: true,
-          deployApp: params.deployApp,
-          deployEnv: params.deployEnv,
-          deployProc: params.deployProc
+          deployApp: params.applicationName,
+          deployEnv: params.environmentName,
+          deployProc: params.applicationProcessName
         ])
+        
+        // Run Global Process
+        step([$class: 'RunGlobalProcessNotifier',
+          siteName: params.siteName,
 
+          globalProcessName: params.globalProcessName,
+          resourceName: params.resourceName
+        ])
+        
+        // Run Application Process
+        step([$class: 'RunApplicationProcessNotifier',
+          siteName: params.siteName,
+
+          component: params.component,
+          versionName: env.BUILD_NUMBER,
+
+          applicationName: params.applicationName,
+          environmentName: params.environmentName,
+          applicationProcessName: params.applicationProcessName
+        ])
       }
     }
     
@@ -74,8 +98,9 @@ pipeline {
     
   }
 
+  // using post-build actions
   post {
-    always {        
+    always {
       // Publish artifacts and run Global Process
       step([$class: 'SerenaDAPublisher',
         skip: params.skip,
@@ -88,9 +113,33 @@ pipeline {
         versionName: "${env.BUILD_NUMBER}-TEST",
 
         runProcess: true,
-        processName: params.processName,
+        processName: params.globalProcessName,
         resourceName: params.resourceName
       ])
+      
+      // Set component version status
+      step([$class: 'UpdateComponentVersionStatusNotifier',
+        siteName: params.siteName,
+
+        action: 'Add',
+        component: params.component,
+        versionName: "${env.BUILD_NUMBER}-TEST",
+        statusName: params.statusName
+      ])
+
+      // Remove component version status
+      step([$class: 'UpdateComponentVersionStatusNotifier',
+        siteName: params.siteName,
+
+        action: 'Remove',
+        component: params.component,
+        versionName: env.BUILD_NUMBER,
+        statusName: params.statusName
+      ])
+
+      // artifacts archiver plugin usage
+      step([$class: 'ArtifactArchiver', artifacts: '*.txt'])
+    }
 
       // artifacts archiver plugin usage
       step([$class: 'ArtifactArchiver', artifacts: '*.txt'])
