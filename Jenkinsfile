@@ -34,7 +34,7 @@ pipeline {
         }
         
         sh 'env > env_variables.txt'
-        sh "'${env.BUILD_NUMBER}' > some_tmp_file.txt"
+        sh "echo '${env.BUILD_NUMBER}' > some_tmp_file.txt"
       }
     }
     
@@ -85,7 +85,7 @@ pipeline {
         fileIncludePatterns: params.fileIncludePatterns,
         fileExcludePatterns: params.fileExcludePatterns,
         component: params.component,
-        versionName: env.BUILD_NUMBER,
+        versionName: "${env.BUILD_NUMBER}-TEST",
 
         runProcess: true,
         processName: params.processName,
