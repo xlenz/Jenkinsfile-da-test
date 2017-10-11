@@ -91,10 +91,10 @@ pipeline {
               globalProcessName: params.globalProcessName,
               resourceName: params.resourceName,
 
-              globalProcessProperties: '''
+              globalProcessProperties: """
                 browser = ${browsers[i]}
                 idx = ${i}
-              '''
+              """
             ])
           }
         }
