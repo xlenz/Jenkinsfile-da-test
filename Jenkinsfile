@@ -85,10 +85,8 @@ pipeline {
           globalProcessName: params.globalProcessName,
           resourceName: params.resourceName,
               
-          globalProcessProperties: '''
-p1=v1
-p2=v2
-          '''
+          globalProcessProperties: '''p1=v1
+p2=v2'''
         ])
         
         // Run Application Process
