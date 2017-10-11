@@ -68,7 +68,7 @@ pipeline {
           statusName: params.statusName,
 
           deploy: true,
-          deployIf: param.deployIf,
+          deployIf: params.deployIf,
           deployUpdateJobStatus: params.deployUpdateJobStatus,
           deployApp: params.applicationName,
           deployEnv: params.environmentName,
@@ -79,7 +79,7 @@ pipeline {
         step([$class: 'RunGlobalProcessNotifier',
           siteName: params.siteName,
 
-          runGlobalProcessIf: param.runGlobalProcessIf,
+          runGlobalProcessIf: params.runGlobalProcessIf,
           updateJobStatus: params.globalProcessUpdateJobStatus,
 
           globalProcessName: params.globalProcessName,
@@ -98,7 +98,7 @@ pipeline {
           componentName: params.componentName,
           versionName: env.BUILD_NUMBER,
               
-          runApplicationProcessIf: param.runApplicationProcessIf,
+          runApplicationProcessIf: params.runApplicationProcessIf,
           updateJobStatus: params.appProcessUpdateJobStatus,
 
           applicationName: params.applicationName,
@@ -137,7 +137,7 @@ pipeline {
         versionName: "${env.BUILD_NUMBER}-TEST",
 
         runProcess: true,
-        processIf: param.processIf,
+        processIf: params.processIf,
         processUpdateJobStatus: params.processUpdateJobStatus,
         processName: params.globalProcessName,
         resourceName: params.resourceName
