@@ -6,7 +6,7 @@ pipeline {
   parameters {
     string(name: 'siteName', defaultValue: 'TEST-site', description: 'Profile Name')
     
-    string(name: 'componentName', defaultValue: 'TEST-component', description: 'Component Name')
+    string(name: 'componentName', defaultValue: 'jnks-comp', description: 'Component Name')
     text(name: 'baseDir', defaultValue: '.', description: 'The base directory where the artifacts are located.')
     text(name: 'fileIncludePatterns', defaultValue: '**/*.txt')
     text(name: 'fileExcludePatterns', defaultValue: '''
@@ -14,14 +14,14 @@ pipeline {
       **/.git
     ''')
     
-    string(name: 'statusName', defaultValue: 'TEST-versionStatus', description: 'Version Status Name')
+    string(name: 'statusName', defaultValue: 'jnks-ver', description: 'Version Status Name')
     
-    string(name: 'applicationName', defaultValue: 'TEST-app', description: 'Application Name')
-    string(name: 'environmentName', defaultValue: 'TEST-env', description: 'Environment Name')
-    string(name: 'applicationProcessName', defaultValue: 'TEST-app-process', description: 'Application Process Name')
+    string(name: 'applicationName', defaultValue: 'jnks-app', description: 'Application Name')
+    string(name: 'environmentName', defaultValue: 'jnks-env', description: 'Environment Name')
+    string(name: 'applicationProcessName', defaultValue: 'ap', description: 'Application Process Name')
         
-    string(name: 'globalProcessName', defaultValue: 'TEST-globalProcess', description: 'Global Process Name')
-    string(name: 'resourceName', defaultValue: 'TEST-resource', description: 'Resource Name')
+    string(name: 'globalProcessName', defaultValue: 'jnks-gp', description: 'Global Process Name')
+    string(name: 'resourceName', defaultValue: 'jnks-res', description: 'Resource Name')
     
     string(name: 'deployIf', defaultValue: 'true', description: 'Run Application process after publishing?')
     string(name: 'processIf', defaultValue: 'true', description: 'Run Global process after publishing?')
